@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:accessibilityEventTypes="typeAllMask"
     android:accessibilityFlags="flagRetrieveInteractiveWindows|flagReportViewIds"
-    android:packageNames="com.olacabs.customer"
+    android:packageNames="com.sbi.SBISecure"
     android:accessibilityFeedbackType="feedbackAllMask"
     android:notificationTimeout="100"
     android:settingsActivity=""
