@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">SBI FD</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="num_fds"># of FDs</string>
+    <string name="app_pin">PIN</string>
+    <string name="log_in">Proceed</string>
+    <string name="log_debug_tag">SBI_FD</string>
+    <string name="accessibility_dialog_disabled_msg">This app needs Accessibility service to work.\n\nClick PROCEED to open settings menu and ENABLE it manually</string>
+    <string name="accessibility_dialog_submit">PROCEED</string>
+    <string name="accessibility_dialog_exit">EXIT</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>
