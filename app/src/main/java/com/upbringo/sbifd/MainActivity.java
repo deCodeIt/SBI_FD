@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkForAccessibility(); // check if accessibility is enabled, otherwise enable it
+//        checkForAccessibility(); // check if accessibility is enabled, otherwise enable it
     }
 
     @Override
