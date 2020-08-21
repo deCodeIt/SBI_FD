@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 sharedPrefEditor.putInt( NUM_FD_TO_BREAK, 2 );
                 sharedPrefEditor.putBoolean( BreakFdInProcess, true );
                 sharedPrefEditor.commit();
-                // startNewActivity( getApplicationContext(), "com.sbi.SBISecure" );
+                startNewActivity( getApplicationContext(), "com.sbi.SBISecure" );
             }
         });
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        checkForAccessibility(); // check if accessibility is enabled, otherwise enable it
+        checkForAccessibility(); // check if accessibility is enabled, otherwise enable it
     }
 
     @Override

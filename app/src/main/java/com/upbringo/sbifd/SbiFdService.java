@@ -24,7 +24,9 @@ public class SbiFdService extends AccessibilityService {
     private static final String TAG = MainActivity.TAG;;
 
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        if( sharedPref.getBoolean( MainActivity.BreakFdInProcess, false ) ){
+        Log.d( TAG, "onAccessibiltiyEvent" );
+        if( !sharedPref.getBoolean( MainActivity.BreakFdInProcess, false ) ) {
+            Log.d( TAG, "Nothing to do" );
             return;
         }
         try {
