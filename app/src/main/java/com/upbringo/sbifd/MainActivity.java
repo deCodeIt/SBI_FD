@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.List;
 
@@ -30,12 +31,13 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "SBI_FD";
     public static boolean isAccessibilityEnabled = false;
     public static final String PREFERENCES = "SBI_FD_PREF";
-    public static final String BreakFdInProcess = "BREAK_FD_IN_PROGRESS";
+    public static final String BREAK_FD_IN_PROGRESS = "BREAK_FD_IN_PROGRESS";
+    public static final String OTP_COPIED = "OTP_COPIED";
 
     // Used with SBI OTP APP
     public static final String PIN = "PIN";
-    public static final String NUM_FD_TO_BREAK = "PIN";
-    public static final String CUR_FD_BROKEN = "PIN";
+    public static final String NUM_FD_TO_BREAK = "NUM_FD_TO_BREAK";
+    public static final String CUR_FD_BROKEN = "CUR_FD_BROKEN";
 
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
@@ -48,14 +50,16 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = getSharedPreferences( PREFERENCES, Context.MODE_PRIVATE );
         sharedPrefEditor = sharedPref.edit();
 
+        final EditText pin = findViewById( R.id.text_pin );
+
         Button logIn = findViewById( R.id.log_in );
         logIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sharedPrefEditor.putString( PIN, "1234" );
+                sharedPrefEditor.putString( PIN, pin.getText().toString() );
                 sharedPrefEditor.putInt( CUR_FD_BROKEN, 0 );
                 sharedPrefEditor.putInt( NUM_FD_TO_BREAK, 2 );
-                sharedPrefEditor.putBoolean( BreakFdInProcess, true );
+                sharedPrefEditor.putBoolean( BREAK_FD_IN_PROGRESS, true );
                 sharedPrefEditor.commit();
                 startNewActivity( getApplicationContext(), "com.sbi.SBISecure" );
             }
