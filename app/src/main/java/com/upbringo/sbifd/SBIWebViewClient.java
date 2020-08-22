@@ -17,17 +17,13 @@ public class SBIWebViewClient extends WebViewClient {
     private WebView webview;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
-    private ProgressDialog progressBar;
+    private ProgressDialog progressDialog;
 
-    SBIWebViewClient( Context c ) {
+    SBIWebViewClient(Context c, ProgressDialog p ) {
         Log.v( TAG, "Initialize SBIWebViewClient with context" );
         mContext = c;
         sharedPref = c.getSharedPreferences( MainActivity.PREFERENCES, Context.MODE_PRIVATE );
-        progressBar = new ProgressDialog( mContext );
-        progressBar.setCancelable( false );
-        progressBar.setMessage( "Loading..." );
-        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressBar.setMax( 100 );
+        progressDialog = p;
     }
 
     private void injectJS(String script) {
@@ -116,15 +112,15 @@ public class SBIWebViewClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-        progressBar.setProgress( 0 );
-        progressBar.show();
+        progressDialog.setProgress( 0 );
+        progressDialog.show();
     }
 
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        progressBar.setProgress( 100 );
-        progressBar.hide();
+        progressDialog.setProgress( 100 );
+        progressDialog.hide();
         String title = view.getTitle();
         switch( url ) {
             case "https://retail.onlinesbi.com/retail/login.htm": {

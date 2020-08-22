@@ -3,6 +3,7 @@ package com.upbringo.sbifd;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,7 +46,14 @@ public class WebviewActivity extends AppCompatActivity {
         webview = findViewById( R.id.webview );
         WebSettings webSettings = webview.getSettings();
         webSettings.setJavaScriptEnabled( true );
-        webview.setWebViewClient( new SBIWebViewClient( this ) );
+
+        ProgressDialog progressDialog = new ProgressDialog( this );
+        progressDialog.setCancelable( false );
+        progressDialog.setMessage( "Loading..." );
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMax( 100 );
+
+        webview.setWebViewClient( new SBIWebViewClient( this, progressDialog ) );
         webview.addJavascriptInterface( new SBIWebAppInterface( this, webview ), "Android" );
         // start login process
         handleInitialNavigation();
