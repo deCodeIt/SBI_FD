@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean isAccessibilityEnabled = false;
     public static final String PREFERENCES = "SBI_FD_PREF";
     public static final String BREAK_FD_IN_PROGRESS = "BREAK_FD_IN_PROGRESS";
-    public static final String OTP_COPIED = "OTP_COPIED";
+    public static final String OTP = "OTP";
 
     // Used with SBI OTP APP
     public static final String PIN = "PIN";

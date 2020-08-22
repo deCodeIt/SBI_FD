@@ -185,8 +185,17 @@ public class SbiFdService extends AccessibilityService {
                 return;
             }
 
+            // Maybe ProgressBar
+            if( rootView.getClassName() == "android.widget.FrameLayout" ) {
+                if( rootView.getChildCount() == 2 && rootView.getChild( 1 ).getClassName() == "android.widget.ProgressBar" ) {
+                    // Progress bar
+                    Log.d( TAG, "On: Progress Bar" );
+                    return;
+                }
+            }
+
             // TRY LOGIN PAGE
-            nodes = rootView.findAccessibilityNodeInfosByText( "Login" );
+            nodes = rootView.findAccessibilityNodeInfosByText( "Enter 4 digit" );
             if( nodes.size() > 0 ) {
                 // login page
                 Log.d( TAG, "ON: Login page" );
@@ -225,18 +234,37 @@ public class SbiFdService extends AccessibilityService {
                 return;
             }
 
-            // Get Online OTP PAGE
+            // Get Online OTP PAGE.
             nodes = rootView.findAccessibilityNodeInfosByText( "Get Online OTP" );
             if( nodes.size() > 0 ) {
-                // options page
+                // Options page.
                 Log.d( TAG, "ON: Get Online OTP page" );
                 node = nodes.get( 0 );
-                node.performAction( AccessibilityNodeInfo.ACTION_CLICK );
+                if( sharedPref.getString( MainActivity.OTP, "" ).length() == 0 ) {
+                    // Empty OTP means otp has either been cleared by the app ( already used ) or yet to be fetched.
+                    Log.d( MainActivity.TAG, "Fetch OTP");
+                    node.getParent().getChild(1).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                } else {
+                    Log.d( MainActivity.TAG, "OTP already exists" );
+                    // Navigate back to app to continue writing the otp.
+                }
                 return;
             }
 
-            // OTP displayed, copy it
-            // sharedPrefEditor = sharedPref.edit();
+            // OTP displayed, copy it.
+            nodes = rootView.findAccessibilityNodeInfosByText( "Your OTP for close" );
+            if( nodes.size() > 0 ) {
+                Log.d( TAG, "ON: OTP Displayed page" );
+                node = nodes.get( 0 );
+                String OTP = node.getParent().getChild(2).getText().toString();
+                sharedPrefEditor = sharedPref.edit();
+                sharedPrefEditor.putString( MainActivity.OTP, OTP );
+                sharedPrefEditor.commit();
+                // Go back to options page.
+                node = rootView.getChild( 0 );
+                node.performAction( AccessibilityNodeInfo.ACTION_CLICK );
+                return;
+            }
 
         } catch( Exception e ) {
             Log.e( TAG, "Some exception occurred: " + e.getMessage() + e.getLocalizedMessage() );
