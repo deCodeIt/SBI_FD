@@ -54,6 +54,7 @@ public class WebviewActivity extends AppCompatActivity {
         progressDialog.setMax( 100 );
 
         webview.setWebViewClient( new SBIWebViewClient( this, progressDialog ) );
+        webview.setWebChromeClient( new SBIWebChromeClient( this, progressDialog ) );
         webview.addJavascriptInterface( new SBIWebAppInterface( this, webview ), "Android" );
         // start login process
         handleInitialNavigation();
