@@ -46,6 +46,7 @@ public class WebviewActivity extends AppCompatActivity {
         WebSettings webSettings = webview.getSettings();
         webSettings.setJavaScriptEnabled( true );
         webview.setWebViewClient( new SBIWebViewClient( this ) );
+        webview.addJavascriptInterface( new SBIWebAppInterface( this, webview ), "Android" );
         // start login process
         handleInitialNavigation();
     }

@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="black_overlay">#66000000</color>
+    <color name="success">#5CB85C</color>
+    <color name="warning">#D9534F</color>
 </resources>
