@@ -1,7 +1,9 @@
 package com.upbringo.sbifd;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.WebView;
@@ -15,11 +17,17 @@ public class SBIWebViewClient extends WebViewClient {
     private WebView webview;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
+    private ProgressDialog progressBar;
 
     SBIWebViewClient( Context c ) {
         Log.v( TAG, "Initialize SBIWebViewClient with context" );
         mContext = c;
         sharedPref = c.getSharedPreferences( MainActivity.PREFERENCES, Context.MODE_PRIVATE );
+        progressBar = new ProgressDialog( mContext );
+        progressBar.setCancelable( false );
+        progressBar.setMessage( "Loading..." );
+        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressBar.setMax( 100 );
     }
 
     private void injectJS(String script) {
@@ -82,16 +90,75 @@ public class SBIWebViewClient extends WebViewClient {
         loadJS( view, script );
     }
 
+    private void doSelectFixedDepositOption( WebView view ) {
+        String script = "callURL('/retail/viewfixeddeposit.htm')";
+        loadJS( view, script );
+    }
+
+    private void doSelectETdrEStdr( WebView view ) {
+        String script = "document.querySelector('input[id=createType][value=createFd]').checked=true;";
+        loadJS( view, script );
+        script = "document.getElementById( 'Proceed' ).click();";
+        loadJS( view, script );
+    }
+
+    private void doSelecCloseAcPrematurely( WebView view ) {
+        String script = "callURL('/retail/fixeddepositpreclosureinitial.htm')";
+        loadJS( view, script );
+    }
+
+    private void doSelectFdToBreak( WebView view ) {
+        // TODO
+        String script = "";
+        loadJS( view, script );
+    }
+
+    @Override
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        super.onPageStarted(view, url, favicon);
+        progressBar.setProgress( 0 );
+        progressBar.show();
+    }
+
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
+        progressBar.setProgress( 100 );
+        progressBar.hide();
         String title = view.getTitle();
         switch( url ) {
             case "https://retail.onlinesbi.com/retail/login.htm": {
-                if( title.equals( "State Bank of India - Personal Banking" ) ) {
-                    doClickOnLogin( view );
+                if (title.equals("State Bank of India - Personal Banking")) {
+                    doClickOnLogin(view);
                 }
                 break;
+            }
+            case "https://retail.onlinesbi.com/retail/mypage.htm": {
+                if (title.equals("State Bank of India")) {
+                    doSelectFixedDepositOption(view);
+                }
+                break;
+            }
+            case "https://retail.onlinesbi.com/retail/viewfixeddeposit.htm": {
+                if (title.equals("State Bank of India")) {
+                    doSelectETdrEStdr(view);
+                }
+                break;
+            }
+            case "https://retail.onlinesbi.com/retail/fixeddeposit.htm": {
+                if (title.equals("State Bank of India")) {
+                    doSelecCloseAcPrematurely(view);
+                }
+                break;
+            }
+            case "https://retail.onlinesbi.com/retail/fixeddepositpreclosureinitial.htm": {
+                if (title.equals("State Bank of India")) {
+                    doSelectFdToBreak(view);
+                }
+                break;
+            }
+            default: {
+                Log.w( TAG, "Unknown page " + url );
             }
         }
     }

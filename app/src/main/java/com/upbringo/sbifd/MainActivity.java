@@ -23,6 +23,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -50,25 +51,48 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPref = getSharedPreferences( PREFERENCES, Context.MODE_PRIVATE );
 
-        final EditText pin = findViewById( R.id.text_pin );
+        final EditText editTextUsername = findViewById( R.id.text_username );
+        final EditText editTextPassword = findViewById( R.id.text_password );
+        final EditText editTextPin = findViewById( R.id.text_pin );
+        final EditText editTextNumFds = findViewById( R.id.text_num_fds );
+
+        editTextUsername.setText( sharedPref.getString( USERNAME, "" ) );
+        editTextPassword.setText( sharedPref.getString( PASSWORD, "" ) );
+        editTextPin.setText( sharedPref.getString( PIN, "" ) );
 
         Button logIn = findViewById( R.id.log_in );
         logIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText editTextUsername = findViewById( R.id.text_username );
-                EditText editTextPassword = findViewById( R.id.text_password );
                 String username = editTextUsername.getText().toString();
                 String password = editTextPassword.getText().toString();
+                String pin = editTextPin.getText().toString();
+                String numFdsStr = editTextNumFds.getText().toString();
+                Integer numFds = Integer.parseInt( numFdsStr );
+                // Validation
+                if( username.length() == 0 ) {
+                    Log.e( TAG, "EmptyUsernameError" );
+                    Toast.makeText( v.getContext(), "Username cannot be empty", Toast.LENGTH_SHORT );
+                    return;
+                } else if( password.length() == 0 ) {
+                    Log.e( TAG, "EmptyPasswordError" );
+                    Toast.makeText( v.getContext(), "Password cannot be empty", Toast.LENGTH_SHORT );
+                    return;
+                } else if( pin.length() == 0 ) {
+                    Log.e( TAG, "EmptyPinError" );
+                    Toast.makeText( v.getContext(), "Pin cannot be empty", Toast.LENGTH_SHORT );
+                    return;
+                }
 
                 sharedPrefEditor = sharedPref.edit();
-                sharedPrefEditor.putString( PIN, pin.getText().toString() );
                 sharedPrefEditor.putInt( CUR_FD_BROKEN, 0 );
-                sharedPrefEditor.putInt( NUM_FD_TO_BREAK, 2 );
+                sharedPrefEditor.putInt( NUM_FD_TO_BREAK, numFds );
                 sharedPrefEditor.putBoolean( BREAK_FD_IN_PROGRESS, true );
                 sharedPrefEditor.putString( OTP, "" );
+
                 sharedPrefEditor.putString( USERNAME, username );
                 sharedPrefEditor.putString( PASSWORD, password );
+                sharedPrefEditor.putString( PIN, pin );
                 sharedPrefEditor.commit();
                 // Redirect to web view to start login process.
                 Intent intent = new Intent( v.getContext(), WebviewActivity.class );
