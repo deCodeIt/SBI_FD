@@ -21,6 +21,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -28,15 +30,31 @@ import java.util.List;
 
 public class WebviewActivity extends AppCompatActivity {
 
-    public static final String TAG = MainActivity.TAG;
+    private static final String TAG = MainActivity.TAG;
 
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
+    private WebView webview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
         Log.d( TAG, "WebviewActivity.onCreate" );
+        // Initialize 1st time variables.
         sharedPref = getSharedPreferences( MainActivity.PREFERENCES, Context.MODE_PRIVATE );
+        webview = findViewById( R.id.webview );
+        WebSettings webSettings = webview.getSettings();
+        webSettings.setJavaScriptEnabled( true );
+        webview.setWebViewClient( new SBIWebViewClient( this ) );
+        // start login process
+        handleInitialNavigation();
+    }
+
+    protected void handleInitialNavigation() {
+        String currentUrl = webview.getUrl();
+        if( currentUrl == null || currentUrl.equals( "" ) ) {
+            // first time initialization of webview
+            webview.loadUrl( "https://retail.onlinesbi.com/retail/login.htm" );
+        }
     }
 }
