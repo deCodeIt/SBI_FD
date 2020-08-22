@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 sharedPrefEditor.putInt( CUR_FD_BROKEN, 0 );
                 sharedPrefEditor.putInt( NUM_FD_TO_BREAK, 2 );
                 sharedPrefEditor.putBoolean( BREAK_FD_IN_PROGRESS, true );
+                sharedPrefEditor.putString( OTP, "" );
                 sharedPrefEditor.commit();
                 startNewActivity( getApplicationContext(), "com.sbi.SBISecure" );
             }
