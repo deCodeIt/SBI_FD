@@ -62,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
                 sharedPrefEditor.putBoolean( BREAK_FD_IN_PROGRESS, true );
                 sharedPrefEditor.putString( OTP, "" );
                 sharedPrefEditor.commit();
-                startNewActivity( getApplicationContext(), "com.sbi.SBISecure" );
+                // Redirect to web view to start login process.
+                Intent intent = new Intent( v.getContext(), WebviewActivity.class );
+                startActivity( intent );
+//                startNewActivity( getApplicationContext(), "com.sbi.SBISecure" );
             }
         });
 
@@ -71,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkForAccessibility(); // check if accessibility is enabled, otherwise enable it
+        // TODO: Enable the following once webview navigation is fixed.
+//        checkForAccessibility(); // check if accessibility is enabled, otherwise enable it
     }
 
     @Override

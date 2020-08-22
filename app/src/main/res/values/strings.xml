@@ -9,5 +9,6 @@
     <string name="accessibility_dialog_disabled_msg">This app needs Accessibility service to work.\n\nClick PROCEED to open settings menu and ENABLE it manually</string>
     <string name="accessibility_dialog_submit">PROCEED</string>
     <string name="accessibility_dialog_exit">EXIT</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">Credentials</string>
+    <string name="title_activity_webview">SBI-FD WebView</string>
 </resources>
