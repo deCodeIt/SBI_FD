@@ -52,6 +52,7 @@ public class WebviewActivity extends AppCompatActivity {
         progressDialog.setMessage( "Loading..." );
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMax( 100 );
+        progressDialog.setCanceledOnTouchOutside( false );
 
         webview.setWebViewClient( new SBIWebViewClient( this, progressDialog ) );
         webview.setWebChromeClient( new SBIWebChromeClient( this, progressDialog ) );
