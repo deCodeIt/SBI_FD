@@ -6,8 +6,12 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import androidx.annotation.Nullable;
 
 import java.io.InputStream;
 
@@ -109,6 +113,17 @@ public class SBIWebViewClient extends WebViewClient {
         loadJS( view, script );
     }
 
+    private  void doLogout( WebView view ) {
+        String script = "cifPopup('Later')";
+        loadJS( view, script );
+    }
+    @Nullable
+    @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+        Log.v(TAG, "shouldInterceptRequest: " + request.getUrl().toString());
+        return super.shouldInterceptRequest(view, request);
+    }
+
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
@@ -155,6 +170,7 @@ public class SBIWebViewClient extends WebViewClient {
             }
             default: {
                 Log.w( TAG, "Unknown page " + url );
+                doLogout( view );
             }
         }
     }
