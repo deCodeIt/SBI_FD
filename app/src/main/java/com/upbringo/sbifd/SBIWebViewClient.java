@@ -181,18 +181,23 @@ public class SBIWebViewClient extends WebViewClient {
         t.scheduleAtFixedRate( new TimerTask() {
             @Override
             public void run() {
-                String OTP = sharedPref.getString( MainActivity.OTP, "" );
+                final String OTP = sharedPref.getString( MainActivity.OTP, "" );
                 if( OTP.length() != 0 ) {
                     // OTP found
-                    String script = "document.querySelector(\"input[name='securityPassword']\").value=" + OTP + ";";
-                    loadJS( view, script );
+                    view.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            String script = "document.querySelector(\"input[name='securityPassword']\").value=" + OTP + ";";
+                            loadJS( view, script );
 
-                    script = "document.getElementById('confirmButton').click();";
-                    loadJS( view, script );
+                            script = "document.getElementById('confirmButton').click();";
+                            loadJS( view, script );
 
-                    sharedPrefEditor = sharedPref.edit();
-                    sharedPrefEditor.putString( MainActivity.OTP, "" ); // set otp to null after fetch
-                    sharedPrefEditor.commit();
+                            sharedPrefEditor = sharedPref.edit();
+                            sharedPrefEditor.putString( MainActivity.OTP, "" ); // set otp to null after fetch
+                            sharedPrefEditor.commit();
+                        }
+                    });
                     t.cancel();
                     Log.d( TAG, "OTP Entered" );
                 } else {

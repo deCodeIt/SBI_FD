@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton( getString( R.string.accessibility_dialog_submit ), new DialogInterface.OnClickListener() {
                     public void onClick( DialogInterface dialog, int id ) {
                         Intent intent = new Intent( Settings.ACTION_ACCESSIBILITY_SETTINGS );
+                        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
                         startActivity( intent );
                     }
                 })
