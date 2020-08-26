@@ -233,7 +233,8 @@ public class SBIWebViewClient extends WebViewClient {
         progressDialog.hide();
         String title = view.getTitle();
         switch( url ) {
-            case "https://retail.onlinesbi.com/retail/login.htm": {
+            case "https://retail.onlinesbi.com/retail/login.htm":
+            case "https://retail.onlinesbi.com/retail/loginsubmit.htm": {
                 if (title.equals("State Bank of India - Personal Banking")) {
                     doClickOnLogin(view);
                 }
