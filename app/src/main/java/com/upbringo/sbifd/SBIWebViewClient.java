@@ -135,6 +135,7 @@ public class SBIWebViewClient extends WebViewClient {
         int currentFdCount = sharedPref.getInt( MainActivity.CUR_FD_BROKEN, 0 );
         int totalFdToBreak = sharedPref.getInt( MainActivity.NUM_FD_TO_BREAK, 0 );
         if( currentFdCount >= totalFdToBreak ) {
+            doLogout( view );
             mActivity.finish(); // terminate activity to go back to main activity.
             return;
         }
