@@ -1,5 +1,7 @@
 package com.upbringo.sbifd;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,24 +12,33 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
 import java.io.InputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SBIWebViewClient extends WebViewClient {
     private static final String TAG = MainActivity.TAG;
     private Context mContext;
+    private Activity mActivity;
     private WebView webview;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
     private ProgressDialog progressDialog;
+    private Dialog msgDialog;
 
-    SBIWebViewClient(Context c, ProgressDialog p ) {
+    SBIWebViewClient(Context c, Activity a, ProgressDialog p ) {
         Log.v( TAG, "Initialize SBIWebViewClient with context" );
         mContext = c;
+        mActivity = a;
         sharedPref = c.getSharedPreferences( MainActivity.PREFERENCES, Context.MODE_PRIVATE );
         progressDialog = p;
+        msgDialog = new Dialog( mContext );
+        msgDialog.setContentView( R.layout.dialog_message );
+        msgDialog.setCanceledOnTouchOutside(false);
     }
 
     private void injectJS(String script) {
@@ -57,7 +68,20 @@ public class SBIWebViewClient extends WebViewClient {
 
     private void loadJS( WebView view, String js ) {
         Log.i( TAG, "Load JS: " + js );
+//        progressDialog.setMessage( "Executing js: " + js );
+        dialogMessage( "Executing Javascript", js );
         view.loadUrl( "javascript:(function() {" + js + "})()" );
+    }
+
+    private void dialogMessage( String title, String msg ) {
+        TextView textViewTitle = msgDialog.findViewById( R.id.text_dialog_title );
+        TextView textViewMessage = msgDialog.findViewById( R.id.text_dialog_message );
+        if( title != null && title.length() != 0 ) {
+            textViewTitle.setText( title );
+        }
+        if( msg != null && msg.length() != 0 ) {
+            textViewMessage.setText( msg );
+        }
     }
 
     private void doClickOnLogin( WebView view ) {
@@ -108,15 +132,81 @@ public class SBIWebViewClient extends WebViewClient {
     }
 
     private void doSelectFdToBreak( WebView view ) {
-        // TODO
-        String script = "";
+        int currentFdCount = sharedPref.getInt( MainActivity.CUR_FD_BROKEN, 0 );
+        int totalFdToBreak = sharedPref.getInt( MainActivity.NUM_FD_TO_BREAK, 0 );
+        if( currentFdCount >= totalFdToBreak ) {
+            mActivity.finish(); // terminate activity to go back to main activity.
+            return;
+        }
+        String script = "document.getElementById( 'dr0').click();";
         loadJS( view, script );
+        script = "document.querySelector(\"input[type='submit'][name='Button'][value='Proceed']\").click();";
+        loadJS( view, script );
+    }
+
+    private void doAddRemark( WebView view ) {
+        String script = "document.getElementById('remarks').value = 'SBI APP';";
+        loadJS( view, script );
+        script = "document.querySelector(\"input[type='button'][name='Confirm'][value='Confirm']\").click();";
+        loadJS( view, script );
+    }
+
+    private void doReturnToBreakFDPage( WebView view ) {
+
+        // increment broken fd count
+        int currentFdCount = sharedPref.getInt( MainActivity.CUR_FD_BROKEN, 0 );
+        sharedPrefEditor = sharedPref.edit();
+        sharedPrefEditor.putInt( MainActivity.CUR_FD_BROKEN, currentFdCount + 1 );
+        sharedPrefEditor.commit();
+
+        // return to break fd page
+        String script = "callURL('/retail/fixeddepositpreclosureinitial.htm');";
+        loadJS( view, script );
+    }
+
+    private void doProcessOTP( WebView view ) {
+        // Fetch otp from app
+        sharedPrefEditor = sharedPref.edit();
+        sharedPrefEditor.putString( MainActivity.OTP, "" ); // set otp to null before fetch
+        sharedPrefEditor.commit();
+
+        // open sbi otp app and copy otp in shared pref
+        MainActivity.startNewActivity( mContext, mContext.getResources().getString( R.string.sbi_app_name ) );
+        waitForOTP( view );
+    }
+
+    private void waitForOTP( final WebView view ) {
+        // wait until we have the OTP
+        final Timer t = new Timer();
+        t.scheduleAtFixedRate( new TimerTask() {
+            @Override
+            public void run() {
+                String OTP = sharedPref.getString( MainActivity.OTP, "" );
+                if( OTP.length() != 0 ) {
+                    // OTP found
+                    String script = "document.querySelector(\"input[name='securityPassword']\").value=" + OTP + ";";
+                    loadJS( view, script );
+
+                    script = "document.getElementById('confirmButton').click();";
+                    loadJS( view, script );
+
+                    sharedPrefEditor = sharedPref.edit();
+                    sharedPrefEditor.putString( MainActivity.OTP, "" ); // set otp to null after fetch
+                    sharedPrefEditor.commit();
+                    t.cancel();
+                    Log.d( TAG, "OTP Entered" );
+                } else {
+                    Log.v(TAG, "Waiting for OTP");
+                }
+            }
+        }, 0, 1000 );
     }
 
     private  void doLogout( WebView view ) {
         String script = "cifPopup('Later')";
         loadJS( view, script );
     }
+
     @Nullable
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
@@ -165,6 +255,24 @@ public class SBIWebViewClient extends WebViewClient {
             case "https://retail.onlinesbi.com/retail/fixeddepositpreclosureinitial.htm": {
                 if (title.equals("State Bank of India")) {
                     doSelectFdToBreak(view);
+                }
+                break;
+            }
+            case "https://retail.onlinesbi.com/retail/fixeddepositpreclosureinterim.htm": {
+                if (title.equals("State Bank of India")) {
+                    doAddRemark(view);
+                }
+                break;
+            }
+            case "https://retail.onlinesbi.com/retail/smsenablehighsecurity.htm": {
+                if (title.equals("State Bank of India")) {
+                    doProcessOTP(view);
+                }
+                break;
+            }
+            case "https://retail.onlinesbi.com/retail/smsenablehighsecurityconfirm.htm": {
+                if (title.equals("State Bank of India")) {
+                    doReturnToBreakFDPage(view);
                 }
                 break;
             }

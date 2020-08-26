@@ -2,6 +2,7 @@ package com.upbringo.sbifd;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -170,7 +171,7 @@ public class SbiFdService extends AccessibilityService {
         }
     }
 
-    public static void doPerformSteps( AccessibilityNodeInfo rootView ) {
+    public void doPerformSteps( AccessibilityNodeInfo rootView ) {
 
         // See if it's asking to select pickup points using change option ( usually when you are at known place )
         try {
@@ -263,6 +264,16 @@ public class SbiFdService extends AccessibilityService {
                 // Go back to options page.
                 node = rootView.getChild( 0 );
                 node.performAction( AccessibilityNodeInfo.ACTION_CLICK );
+                // go back to our app after 1 sec
+                final Context context = this;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent( context , WebviewActivity.class);
+                        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+                        context.startActivity( intent );
+                    }
+                }, 1000 );
                 return;
             }
 

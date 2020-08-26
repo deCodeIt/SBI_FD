@@ -20,6 +20,9 @@ public class SBIWebChromeClient extends WebChromeClient {
     public void onProgressChanged(WebView view, int newProgress) {
         super.onProgressChanged(view, newProgress);
         Log.v( TAG, "Progress " + newProgress );
+        if( newProgress != 100 && !progressDialog.isShowing() ) {
+            progressDialog.show();
+        }
         progressDialog.setProgress( newProgress );
     }
 }

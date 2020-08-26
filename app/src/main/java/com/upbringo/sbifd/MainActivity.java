@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 // Redirect to web view to start login process.
                 Intent intent = new Intent( v.getContext(), WebviewActivity.class );
                 startActivity( intent );
-//                startNewActivity( getApplicationContext(), "com.sbi.SBISecure" );
             }
         });
 
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // TODO: Enable the following once webview navigation is fixed.
-//        checkForAccessibility(); // check if accessibility is enabled, otherwise enable it
+        checkForAccessibility(); // check if accessibility is enabled, otherwise enable it
     }
 
     @Override
@@ -179,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void startNewActivity(Context context, String packageName) {
+    public static void startNewActivity(Context context, String packageName) {
         Intent intent = context.getPackageManager().getLaunchIntentForPackage( packageName );
         if (intent == null) {
             Log.d( TAG, "Null Intent");
@@ -187,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
             intent = new Intent( Intent.ACTION_VIEW );
             intent.setData( Uri.parse("market://details?id=" + packageName ) );
         }
-        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP );
         context.startActivity( intent );
     }
 

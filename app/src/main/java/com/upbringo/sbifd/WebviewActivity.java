@@ -36,6 +36,7 @@ public class WebviewActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
     private WebView webview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +55,7 @@ public class WebviewActivity extends AppCompatActivity {
         progressDialog.setMax( 100 );
         progressDialog.setCanceledOnTouchOutside( false );
 
-        webview.setWebViewClient( new SBIWebViewClient( this, progressDialog ) );
+        webview.setWebViewClient( new SBIWebViewClient( this, this, progressDialog ) );
         webview.setWebChromeClient( new SBIWebChromeClient( this, progressDialog ) );
         webview.addJavascriptInterface( new SBIWebAppInterface( this, webview ), "Android" );
         // start login process
