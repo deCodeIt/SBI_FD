@@ -1,6 +1,7 @@
 package com.upbringo.sbifd;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -36,12 +37,21 @@ public class WebviewActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
     private WebView webview;
+    @SuppressLint("StaticFieldLeak")
+    public static Context mContext;
+    @SuppressLint("StaticFieldLeak")
+    public static Activity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
         Log.d( TAG, "WebviewActivity.onCreate" );
+
+        // Set context and activity so service can use it.
+        mActivity = this;
+        mContext = getApplicationContext();
+
         // Initialize 1st time variables.
         sharedPref = getSharedPreferences( MainActivity.PREFERENCES, Context.MODE_PRIVATE );
         webview = findViewById( R.id.webview );

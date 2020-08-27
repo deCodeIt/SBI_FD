@@ -1,14 +1,17 @@
 package com.upbringo.sbifd;
 
 import android.accessibilityservice.AccessibilityService;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -259,17 +262,28 @@ public class SbiFdService extends AccessibilityService {
                 node = rootView.getChild( 0 );
                 node.performAction( AccessibilityNodeInfo.ACTION_CLICK );
                 // go back to our app after 1 sec
-                final Context context = this;
-                new Handler().postDelayed(new Runnable() {
+                Thread thread = new Thread() {
                     @Override
                     public void run() {
-                        Log.v( TAG, "Going back to app" );
-                        Intent intent = new Intent( context , MainActivity.class );
-                        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP );
-                        context.startActivity( intent );
-                        Log.v( TAG, "Back to app" );
+                        // Block this thread for 2 seconds.
+                        try {
+                            Thread.sleep(1000);
+                        } catch ( InterruptedException e ) {
+                        }
+
+                        // After sleep finished blocking, create a Runnable to run on the UI Thread.
+                        WebviewActivity.mActivity.runOnUiThread( new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.v( TAG, "Going back to app:: " + BuildConfig.APPLICATION_ID );
+                                MainActivity.startNewActivity( WebviewActivity.mContext, BuildConfig.APPLICATION_ID );
+                                Log.v( TAG, "Back to app" );
+                            }
+                        });
                     }
-                }, 1000 );
+                };
+                thread.start();
+                thread.join();
                 return;
             }
 

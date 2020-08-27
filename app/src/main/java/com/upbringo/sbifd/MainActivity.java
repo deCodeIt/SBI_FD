@@ -1,6 +1,7 @@
 package com.upbringo.sbifd;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -32,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "SBI_FD";
     public static boolean isAccessibilityEnabled = false;
 
+    @SuppressLint("StaticFieldLeak")
+    public static Context mContext;
+    @SuppressLint("StaticFieldLeak")
+    public static Activity mActivity;
+
+
     public static final String PREFERENCES = "SBI_FD_PREF";
     public static final String BREAK_FD_IN_PROGRESS = "BREAK_FD_IN_PROGRESS";
     public static final String OTP = "OTP";
@@ -47,7 +54,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d( TAG, "onCreate");
+        Log.d( TAG, "MainActivity.onCreate" );
+
+        // Set context and activity so service can use it.
+        mActivity = this;
+        mContext = getApplicationContext();
 
         sharedPref = getSharedPreferences( PREFERENCES, Context.MODE_PRIVATE );
 
@@ -187,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
             intent = new Intent( Intent.ACTION_VIEW );
             intent.setData( Uri.parse("market://details?id=" + packageName ) );
         }
-        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+        intent.addFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP );
         context.startActivity( intent );
     }
 

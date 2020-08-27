@@ -208,7 +208,7 @@ public class SBIWebViewClient extends WebViewClient {
                     t.cancel();
                     Log.d( TAG, "OTP Entered" );
                 } else {
-                    Log.v(TAG, "Waiting for OTP");
+                    Log.v( TAG, "Waiting for OTP" );
                 }
             }
         }, 0, 1000 );
