@@ -136,7 +136,6 @@ public class SBIWebViewClient extends WebViewClient {
         int totalFdToBreak = sharedPref.getInt( MainActivity.NUM_FD_TO_BREAK, 0 );
         if( currentFdCount >= totalFdToBreak ) {
             doLogout( view );
-            mActivity.finish(); // terminate activity to go back to main activity.
             return;
         }
         String script = "document.getElementById( 'dr0').click();";
@@ -213,6 +212,10 @@ public class SBIWebViewClient extends WebViewClient {
         loadJS( view, script );
     }
 
+    private void doFinishActivity( WebView view ) {
+        mActivity.finish(); // terminate activity to go back to main activity.
+    }
+
     @Nullable
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
@@ -280,6 +283,12 @@ public class SBIWebViewClient extends WebViewClient {
             case "https://retail.onlinesbi.com/retail/smsenablehighsecurityconfirm.htm": {
                 if (title.equals("State Bank of India")) {
                     doReturnToBreakFDPage(view);
+                }
+                break;
+            }
+            case "https://retail.onlinesbi.com/retail/logout.htm": {
+                if (title.equals("State Bank of India")) {
+                    doFinishActivity(view);
                 }
                 break;
             }
