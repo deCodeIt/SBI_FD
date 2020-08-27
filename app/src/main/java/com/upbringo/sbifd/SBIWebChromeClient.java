@@ -7,7 +7,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
 public class SBIWebChromeClient extends WebChromeClient {
-    private static final String TAG = MainActivity.TAG;
+    private static final String TAG = "SBI_CHROME_CLIENT";
     private Context mContext;
     private ProgressDialog progressDialog;
 
@@ -20,7 +20,7 @@ public class SBIWebChromeClient extends WebChromeClient {
     public void onProgressChanged(WebView view, int newProgress) {
         super.onProgressChanged(view, newProgress);
         Log.v( TAG, "Progress " + newProgress );
-        if( newProgress != 100 && !progressDialog.isShowing() ) {
+        if( newProgress != 100 ) {
             progressDialog.show();
         }
         progressDialog.setProgress( newProgress );

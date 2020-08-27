@@ -22,59 +22,55 @@ public class SbiFdService extends AccessibilityService {
     private static SharedPreferences sharedPref;
     private static SharedPreferences.Editor sharedPrefEditor;
     private Object mutex;
-    private static final String TAG = MainActivity.TAG;;
+    private static final String TAG = "SBI_SERVICE";
 
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        Log.d( TAG, "onAccessibiltiyEvent" );
+        Log.v( TAG, "onAccessibiltiyEvent" );
         if( !sharedPref.getBoolean( MainActivity.BREAK_FD_IN_PROGRESS, false ) ) {
             Log.d( TAG, "Nothing to do" );
             return;
         }
         try {
             // clickPerform(getRootInActiveWindow(), 0);
-            Log.d(TAG, "==============================================");
-            Log.i(TAG, "ACC::onAccessibilityEvent: " + event.getEventType());
-            if (event.getContentChangeTypes() > 0) {
+            Log.v(TAG, "==============================================");
+            Log.d(TAG, "Event: " + event);
+            // TODO explore why getContentChangeTypes was used?
+            if ( event.getContentChangeTypes() > 0 || true ) {
                 //TYPE_WINDOW_STATE_CHANGED == 32
                 //TYPE_WINDOW_CONTENT_CHANGED == 2048
                 switch (event.getEventType()) {
                     case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED: {
                         AccessibilityNodeInfo nodeInfo = event.getSource();
-                        Log.d(TAG, "" + event);
-                        Log.d(TAG, "" + event.getContentChangeTypes());
-
                         Log.i(TAG, "ACC::onAccessibilityEvent: STATE_CHANGED nodeInfo=" + nodeInfo);
                         if (nodeInfo == null) {
                             return;
                         }
-                        Log.d(TAG, "" + nodeInfo.getText());
-                        Log.d(TAG, "" + nodeInfo.getContentDescription());
-                        Log.d(TAG, "" + nodeInfo.getViewIdResourceName());
-                        Log.d(TAG, "" + nodeInfo.getActionList());
-                        Log.d(TAG, "" + nodeInfo.getInputType());
-                        Log.d(TAG, "" + nodeInfo.getLabelFor());
-                        Log.d(TAG, "" + nodeInfo.getParent());
-                        Log.d(TAG, "" + nodeInfo.getWindow());
+//                        Log.d(TAG, "" + nodeInfo.getText());
+//                        Log.d(TAG, "" + nodeInfo.getContentDescription());
+//                        Log.d(TAG, "" + nodeInfo.getViewIdResourceName());
+//                        Log.d(TAG, "" + nodeInfo.getActionList());
+//                        Log.d(TAG, "" + nodeInfo.getInputType());
+//                        Log.d(TAG, "" + nodeInfo.getLabelFor());
+//                        Log.d(TAG, "" + nodeInfo.getParent());
+//                        Log.d(TAG, "" + nodeInfo.getWindow());
                     }
                     break;
                     case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED: {
                         AccessibilityNodeInfo nodeInfo = event.getSource();
-                        // Log.d(TAG, "" + event);
-                        // Log.d(TAG, "" + event.getContentChangeTypes());
 
                         Log.i(TAG, "ACC::onAccessibilityEvent: CONTENT_CHANGED nodeInfo=" + nodeInfo);
                         if (nodeInfo == null) {
                             return;
                         }
-                        Log.d(TAG, "" + nodeInfo.getText());
-                        Log.d(TAG, "" + nodeInfo.getContentDescription());
-                        Log.d(TAG, "" + nodeInfo.getViewIdResourceName());
-                        Log.d(TAG, "" + nodeInfo.getActionList());
-                        Log.d(TAG, "" + nodeInfo.getInputType());
-                        Log.d(TAG, "" + nodeInfo.getLabelFor());
-                        Log.d(TAG, "" + nodeInfo.getParent());
-                        Log.d(TAG, "" + nodeInfo.getWindow());
-                        Log.d(TAG, "" + nodeInfo.getWindowId());
+//                        Log.d(TAG, "" + nodeInfo.getText());
+//                        Log.d(TAG, "" + nodeInfo.getContentDescription());
+//                        Log.d(TAG, "" + nodeInfo.getViewIdResourceName());
+//                        Log.d(TAG, "" + nodeInfo.getActionList());
+//                        Log.d(TAG, "" + nodeInfo.getInputType());
+//                        Log.d(TAG, "" + nodeInfo.getLabelFor());
+//                        Log.d(TAG, "" + nodeInfo.getParent());
+//                        Log.d(TAG, "" + nodeInfo.getWindow());
+//                        Log.d(TAG, "" + nodeInfo.getWindowId());
 
                         AccessibilityNodeInfo rootView = getRootInActiveWindow();
                         if (rootView != null) {
@@ -92,48 +88,46 @@ public class SbiFdService extends AccessibilityService {
                     break;
                     case AccessibilityEvent.TYPE_VIEW_CLICKED: {
                         AccessibilityNodeInfo nodeInfo = event.getSource();
-                        Log.d(TAG, "" + event);
-                        Log.d(TAG, "" + event.getContentChangeTypes());
 
                         Log.i(TAG, "ACC::onAccessibilityEvent: CLICKED nodeInfo=" + nodeInfo);
                         if (nodeInfo == null) {
                             return;
                         }
-                        Log.d(TAG, "" + nodeInfo.getText());
-                        Log.d(TAG, "" + nodeInfo.getContentDescription());
-                        Log.d(TAG, "" + nodeInfo.getViewIdResourceName());
-                        Log.d(TAG, "" + nodeInfo.getActionList());
-                        Log.d(TAG, "" + nodeInfo.getInputType());
-                        Log.d(TAG, "" + nodeInfo.getLabelFor());
-                        Log.d(TAG, "" + nodeInfo.getParent());
-                        Log.d(TAG, "" + nodeInfo.getWindow());
+//                        Log.d(TAG, "" + nodeInfo.getText());
+//                        Log.d(TAG, "" + nodeInfo.getContentDescription());
+//                        Log.d(TAG, "" + nodeInfo.getViewIdResourceName());
+//                        Log.d(TAG, "" + nodeInfo.getActionList());
+//                        Log.d(TAG, "" + nodeInfo.getInputType());
+//                        Log.d(TAG, "" + nodeInfo.getLabelFor());
+//                        Log.d(TAG, "" + nodeInfo.getParent());
+//                        Log.d(TAG, "" + nodeInfo.getWindow());
                     }
                     break;
                     case AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED: {
                         AccessibilityNodeInfo nodeInfo = event.getSource();
-                        Log.d(TAG, "" + event);
-                        Log.d(TAG, "" + event.getContentChangeTypes());
 
                         Log.i(TAG, "ACC::onAccessibilityEvent: FOCUSED nodeInfo=" + nodeInfo);
                         if (nodeInfo == null) {
                             return;
                         }
-                        Log.d(TAG, "" + nodeInfo.getText());
-                        Log.d(TAG, "" + nodeInfo.getContentDescription());
-                        Log.d(TAG, "" + nodeInfo.getViewIdResourceName());
-                        Log.d(TAG, "" + nodeInfo.getActionList());
-                        Log.d(TAG, "" + nodeInfo.getInputType());
-                        Log.d(TAG, "" + nodeInfo.getLabelFor());
-                        Log.d(TAG, "" + nodeInfo.getParent());
-                        Log.d(TAG, "" + nodeInfo.getWindow());
+//                        Log.d(TAG, "" + nodeInfo.getText());
+//                        Log.d(TAG, "" + nodeInfo.getContentDescription());
+//                        Log.d(TAG, "" + nodeInfo.getViewIdResourceName());
+//                        Log.d(TAG, "" + nodeInfo.getActionList());
+//                        Log.d(TAG, "" + nodeInfo.getInputType());
+//                        Log.d(TAG, "" + nodeInfo.getLabelFor());
+//                        Log.d(TAG, "" + nodeInfo.getParent());
+//                        Log.d(TAG, "" + nodeInfo.getWindow());
                     }
                     break;
                     default: {
                         Log.d(TAG, "Unhandled event");
                     }
                 }
+            } else {
+                Log.v( TAG, "No content changed" );
             }
-            logViewHierarchy(getRootInActiveWindow(), 0);
+//            logViewHierarchy(getRootInActiveWindow(), 0);
         } catch( Exception e ){
             Log.e( TAG, "UNEXPECTED ERROR OCCURRED" );
             e.printStackTrace();
@@ -269,9 +263,11 @@ public class SbiFdService extends AccessibilityService {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent( context , WebviewActivity.class);
+                        Log.v( TAG, "Going back to app" );
+                        Intent intent = new Intent( context , MainActivity.class );
                         intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                         context.startActivity( intent );
+                        Log.v( TAG, "Back to app" );
                     }
                 }, 1000 );
                 return;

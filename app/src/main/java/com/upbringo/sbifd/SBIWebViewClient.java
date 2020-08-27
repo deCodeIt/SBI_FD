@@ -24,16 +24,18 @@ public class SBIWebViewClient extends WebViewClient {
     private static final String TAG = MainActivity.TAG;
     private Context mContext;
     private Activity mActivity;
+    private WebviewActivity mWebviewActivity;
     private WebView webview;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
     private ProgressDialog progressDialog;
     private Dialog msgDialog;
 
-    SBIWebViewClient(Context c, Activity a, ProgressDialog p ) {
+    SBIWebViewClient(Context c, Activity a, WebviewActivity w, ProgressDialog p ) {
         Log.v( TAG, "Initialize SBIWebViewClient with context" );
         mContext = c;
         mActivity = a;
+        mWebviewActivity = w;
         sharedPref = c.getSharedPreferences( MainActivity.PREFERENCES, Context.MODE_PRIVATE );
         progressDialog = p;
         msgDialog = new Dialog( mContext );
@@ -184,9 +186,14 @@ public class SBIWebViewClient extends WebViewClient {
                 final String OTP = sharedPref.getString( MainActivity.OTP, "" );
                 if( OTP.length() != 0 ) {
                     // OTP found
+                    if( !mWebviewActivity.visible ) {
+                        Log.v( TAG, "App is in backgruond" );
+                        return;
+                    }
                     view.post(new Runnable() {
                         @Override
                         public void run() {
+                            Log.v( TAG, "OTP: " + OTP );
                             String script = "document.querySelector(\"input[name='securityPassword']\").value=" + OTP + ";";
                             loadJS( view, script );
 
@@ -219,7 +226,7 @@ public class SBIWebViewClient extends WebViewClient {
     @Nullable
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-        Log.v(TAG, "shouldInterceptRequest: " + request.getUrl().toString());
+//        Log.v(TAG, "shouldInterceptRequest: " + request.getUrl().toString());
         return super.shouldInterceptRequest(view, request);
     }
 

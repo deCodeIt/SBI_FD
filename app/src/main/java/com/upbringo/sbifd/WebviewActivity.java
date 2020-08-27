@@ -32,7 +32,7 @@ import java.util.List;
 public class WebviewActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.TAG;
-
+    public boolean visible = false;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
     private WebView webview;
@@ -55,11 +55,23 @@ public class WebviewActivity extends AppCompatActivity {
         progressDialog.setMax( 100 );
         progressDialog.setCanceledOnTouchOutside( false );
 
-        webview.setWebViewClient( new SBIWebViewClient( this, this, progressDialog ) );
+        webview.setWebViewClient( new SBIWebViewClient( this, this, this, progressDialog ) );
         webview.setWebChromeClient( new SBIWebChromeClient( this, progressDialog ) );
         webview.addJavascriptInterface( new SBIWebAppInterface( this, webview ), "Android" );
         // start login process
         handleInitialNavigation();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        visible = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        visible = false;
     }
 
     protected void handleInitialNavigation() {
