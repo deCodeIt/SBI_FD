@@ -265,7 +265,7 @@ public class SbiFdService extends AccessibilityService {
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
-                        // Block this thread for 2 seconds.
+                        // Block this thread for 1 seconds.
                         try {
                             Thread.sleep(1000);
                         } catch ( InterruptedException e ) {

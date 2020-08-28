@@ -30,6 +30,7 @@ public class SBIWebViewClient extends WebViewClient {
     private SharedPreferences.Editor sharedPrefEditor;
     private ProgressDialog progressDialog;
     private Dialog msgDialog;
+    private Timer t;
 
     SBIWebViewClient(Context c, Activity a, WebviewActivity w, ProgressDialog p ) {
         Log.v( TAG, "Initialize SBIWebViewClient with context" );
@@ -179,7 +180,10 @@ public class SBIWebViewClient extends WebViewClient {
 
     private void waitForOTP( final WebView view ) {
         // wait until we have the OTP
-        final Timer t = new Timer();
+        if( t != null ) {
+            t.cancel();
+        }
+        t = new Timer();
         t.scheduleAtFixedRate( new TimerTask() {
             @Override
             public void run() {
@@ -228,6 +232,14 @@ public class SBIWebViewClient extends WebViewClient {
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
 //        Log.v(TAG, "shouldInterceptRequest: " + request.getUrl().toString());
         return super.shouldInterceptRequest(view, request);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if( t != null ) {
+            t.cancel();
+        }
     }
 
     @Override
