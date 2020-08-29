@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +23,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -32,12 +35,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "SBI_FD";
     public static boolean isAccessibilityEnabled = false;
+    public boolean visible = false;
 
     @SuppressLint("StaticFieldLeak")
     public static Context mContext;
     @SuppressLint("StaticFieldLeak")
     public static Activity mActivity;
 
+    private WebView webview;
 
     public static final String PREFERENCES = "SBI_FD_PREF";
     public static final String BREAK_FD_IN_PROGRESS = "BREAK_FD_IN_PROGRESS";
@@ -71,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         editTextPassword.setText( sharedPref.getString( PASSWORD, "" ) );
         editTextPin.setText( sharedPref.getString( PIN, "" ) );
 
-        Button logIn = findViewById( R.id.log_in );
+        final Button logIn = findViewById( R.id.log_in );
         logIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,16 +111,41 @@ public class MainActivity extends AppCompatActivity {
                 sharedPrefEditor.putString( PIN, pin );
                 sharedPrefEditor.commit();
                 // Redirect to web view to start login process.
-                Intent intent = new Intent( v.getContext(), WebviewActivity.class );
-                startActivity( intent );
+//                Intent intent = new Intent( v.getContext(), WebviewActivity.class );
+//                startActivity( intent );
+                // start login process
+                webview.setVisibility( View.VISIBLE );
+                editTextUsername.setVisibility( View.GONE );
+                editTextPassword.setVisibility( View.GONE );
+                editTextPin.setVisibility( View.GONE );
+                editTextNumFds.setVisibility( View.GONE );
+                logIn.setVisibility( View.GONE );
+                handleInitialNavigation();
             }
         });
+
+        webview = findViewById( R.id.webviewMain );
+        WebSettings webSettings = webview.getSettings();
+        webSettings.setJavaScriptEnabled( true );
+        webview.setVisibility( View.GONE );
+
+        ProgressDialog progressDialog = new ProgressDialog( this );
+        progressDialog.setCancelable( false );
+        progressDialog.setMessage( "Loading..." );
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMax( 100 );
+        progressDialog.setCanceledOnTouchOutside( false );
+
+        webview.setWebViewClient( new SBIWebViewClient( this, this, this, progressDialog ) );
+        webview.setWebChromeClient( new SBIWebChromeClient( this, progressDialog ) );
+        webview.addJavascriptInterface( new SBIWebAppInterface( this, webview ), "Android" );
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        visible = true;
         // TODO: Enable the following once webview navigation is fixed.
         checkForAccessibility(); // check if accessibility is enabled, otherwise enable it
     }
@@ -123,6 +153,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        visible = false;
+    }
+
+    protected void handleInitialNavigation() {
+        String currentUrl = webview.getUrl();
+        if( currentUrl == null || currentUrl.equals( "" ) ) {
+            // first time initialization of webview
+            webview.loadUrl( "https://retail.onlinesbi.com/retail/login.htm" );
+        }
     }
 
     public static void logInstalledAccessiblityServices(Context context) {

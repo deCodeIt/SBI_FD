@@ -25,7 +25,7 @@ public class SBIWebViewClient extends WebViewClient {
     private static final String TAG = MainActivity.TAG;
     private Context mContext;
     private Activity mActivity;
-    private WebviewActivity mWebviewActivity;
+    private MainActivity mainActivity;
     private WebView webview;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor sharedPrefEditor;
@@ -33,11 +33,11 @@ public class SBIWebViewClient extends WebViewClient {
     private Dialog msgDialog;
     private Timer t;
 
-    SBIWebViewClient(Context c, Activity a, WebviewActivity w, ProgressDialog p ) {
+    SBIWebViewClient(Context c, Activity a, MainActivity m, ProgressDialog p ) {
         Log.v( TAG, "Initialize SBIWebViewClient with context" );
         mContext = c;
         mActivity = a;
-        mWebviewActivity = w;
+        mainActivity = m;
         sharedPref = c.getSharedPreferences( MainActivity.PREFERENCES, Context.MODE_PRIVATE );
         progressDialog = p;
         msgDialog = new Dialog( mContext );
@@ -191,7 +191,7 @@ public class SBIWebViewClient extends WebViewClient {
                 final String OTP = sharedPref.getString( MainActivity.OTP, "" );
                 if( OTP.length() != 0 ) {
                     // OTP found
-                    if( !mWebviewActivity.visible ) {
+                    if( !mainActivity.visible ) {
                         Log.v( TAG, "App is in backgruond" );
                         return;
                     }

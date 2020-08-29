@@ -65,7 +65,7 @@ public class WebviewActivity extends AppCompatActivity {
         progressDialog.setMax( 100 );
         progressDialog.setCanceledOnTouchOutside( false );
 
-        webview.setWebViewClient( new SBIWebViewClient( this, this, this, progressDialog ) );
+//        webview.setWebViewClient( new SBIWebViewClient( this, this, this, progressDialog ) );
         webview.setWebChromeClient( new SBIWebChromeClient( this, progressDialog ) );
         webview.addJavascriptInterface( new SBIWebAppInterface( this, webview ), "Android" );
         // start login process

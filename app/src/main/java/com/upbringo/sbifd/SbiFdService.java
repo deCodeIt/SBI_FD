@@ -56,6 +56,18 @@ public class SbiFdService extends AccessibilityService {
 //                        Log.d(TAG, "" + nodeInfo.getLabelFor());
 //                        Log.d(TAG, "" + nodeInfo.getParent());
 //                        Log.d(TAG, "" + nodeInfo.getWindow());
+                        AccessibilityNodeInfo rootView = getRootInActiveWindow();
+                        if (rootView != null) {
+                            if (sharedPref != null) {
+                                synchronized ( mutex ) {
+                                    doPerformSteps(rootView);
+                                }
+                            } else {
+                                Log.d(TAG, "SharedPreferences is not set");
+                            }
+                        } else {
+                            Log.d(TAG, "RootView not found");
+                        }
                     }
                     break;
                     case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED: {
@@ -245,6 +257,31 @@ public class SbiFdService extends AccessibilityService {
                 } else {
                     Log.d( MainActivity.TAG, "OTP already exists" );
                     // Navigate back to app to continue writing the otp.
+                    // go back to our app after 1 sec
+//                    Thread thread = new Thread() {
+//                        @Override
+//                        public void run() {
+//                            // Block this thread for 1 seconds.
+//                            try {
+//                                Thread.sleep(1000);
+//                            } catch ( InterruptedException e ) {
+//                            }
+//
+//                            // After sleep finished blocking, create a Runnable to run on the UI Thread.
+//                            MainActivity.mActivity.runOnUiThread( new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    Log.v( TAG, "Going back to app:: " + BuildConfig.APPLICATION_ID );
+//                                    MainActivity.startNewActivity( MainActivity.mContext, BuildConfig.APPLICATION_ID );
+//                                    Log.v( TAG, "Back to app" );
+//                                }
+//                            });
+//                        }
+//                    };
+//                    thread.start();
+//                    thread.join();
+                    Log.v( TAG, "Navigating back to App: " + BuildConfig.APPLICATION_ID );
+                    MainActivity.startNewActivity( MainActivity.mActivity, BuildConfig.APPLICATION_ID, Intent.FLAG_ACTIVITY_SINGLE_TOP );
                 }
                 return;
             }
@@ -261,36 +298,6 @@ public class SbiFdService extends AccessibilityService {
                 // Go back to options page.
                 node = rootView.getChild( 0 );
                 node.performAction( AccessibilityNodeInfo.ACTION_CLICK );
-                // go back to our app after 1 sec
-//                Thread thread = new Thread() {
-//                    @Override
-//                    public void run() {
-//                        // Block this thread for 1 seconds.
-//                        try {
-//                            Thread.sleep(1000);
-//                        } catch ( InterruptedException e ) {
-//                        }
-//
-//                        // After sleep finished blocking, create a Runnable to run on the UI Thread.
-//                        MainActivity.mActivity.runOnUiThread( new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Log.v( TAG, "Going back to app:: " + BuildConfig.APPLICATION_ID );
-//                                MainActivity.startNewActivity( MainActivity.mContext, BuildConfig.APPLICATION_ID );
-//                                Log.v( TAG, "Back to app" );
-//                            }
-//                        });
-//                    }
-//                };
-//                thread.start();
-//                thread.join();
-                Log.v( TAG, "Going back to App: " + BuildConfig.APPLICATION_ID );
-                WebviewActivity.mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        MainActivity.startNewActivity( WebviewActivity.mActivity, BuildConfig.APPLICATION_ID, Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT );
-                    }
-                });
                 return;
             }
 
