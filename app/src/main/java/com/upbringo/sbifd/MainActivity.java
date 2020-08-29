@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public static void startNewActivity(Context context, String packageName) {
+    public static void startNewActivity(Context context, String packageName, int flags) {
         Intent intent = context.getPackageManager().getLaunchIntentForPackage( packageName );
         if (intent == null) {
             Log.d( TAG, "Null Intent");
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
             intent = new Intent( Intent.ACTION_VIEW );
             intent.setData( Uri.parse("market://details?id=" + packageName ) );
         }
-        intent.addFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP );
+        intent.addFlags( flags );
         context.startActivity( intent );
     }
 

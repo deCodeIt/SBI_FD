@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Base64;
@@ -174,7 +175,7 @@ public class SBIWebViewClient extends WebViewClient {
         sharedPrefEditor.commit();
 
         // open sbi otp app and copy otp in shared pref
-        MainActivity.startNewActivity( mContext, mContext.getResources().getString( R.string.sbi_app_name ) );
+        MainActivity.startNewActivity( mContext, mContext.getResources().getString( R.string.sbi_app_name ), Intent.FLAG_ACTIVITY_SINGLE_TOP );
         waitForOTP( view );
     }
 

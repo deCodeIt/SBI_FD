@@ -262,33 +262,40 @@ public class SbiFdService extends AccessibilityService {
                 node = rootView.getChild( 0 );
                 node.performAction( AccessibilityNodeInfo.ACTION_CLICK );
                 // go back to our app after 1 sec
-                Thread thread = new Thread() {
+//                Thread thread = new Thread() {
+//                    @Override
+//                    public void run() {
+//                        // Block this thread for 1 seconds.
+//                        try {
+//                            Thread.sleep(1000);
+//                        } catch ( InterruptedException e ) {
+//                        }
+//
+//                        // After sleep finished blocking, create a Runnable to run on the UI Thread.
+//                        MainActivity.mActivity.runOnUiThread( new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Log.v( TAG, "Going back to app:: " + BuildConfig.APPLICATION_ID );
+//                                MainActivity.startNewActivity( MainActivity.mContext, BuildConfig.APPLICATION_ID );
+//                                Log.v( TAG, "Back to app" );
+//                            }
+//                        });
+//                    }
+//                };
+//                thread.start();
+//                thread.join();
+                Log.v( TAG, "Going back to App: " + BuildConfig.APPLICATION_ID );
+                WebviewActivity.mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // Block this thread for 1 seconds.
-                        try {
-                            Thread.sleep(1000);
-                        } catch ( InterruptedException e ) {
-                        }
-
-                        // After sleep finished blocking, create a Runnable to run on the UI Thread.
-                        WebviewActivity.mActivity.runOnUiThread( new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.v( TAG, "Going back to app:: " + BuildConfig.APPLICATION_ID );
-                                MainActivity.startNewActivity( WebviewActivity.mContext, BuildConfig.APPLICATION_ID );
-                                Log.v( TAG, "Back to app" );
-                            }
-                        });
+                        MainActivity.startNewActivity( WebviewActivity.mActivity, BuildConfig.APPLICATION_ID, Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT );
                     }
-                };
-                thread.start();
-                thread.join();
+                });
                 return;
             }
 
         } catch( Exception e ) {
-            Log.e( TAG, "Some exception occurred: " + e.getMessage() + e.getLocalizedMessage() );
+            Log.e( TAG, "An exception occurred: " + e.getMessage() + e.getLocalizedMessage() );
             e.printStackTrace();
         }
     }
