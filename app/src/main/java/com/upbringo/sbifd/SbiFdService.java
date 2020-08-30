@@ -257,31 +257,15 @@ public class SbiFdService extends AccessibilityService {
                 } else {
                     Log.d( MainActivity.TAG, "OTP already exists" );
                     // Navigate back to app to continue writing the otp.
-                    // go back to our app after 1 sec
-//                    Thread thread = new Thread() {
-//                        @Override
-//                        public void run() {
-//                            // Block this thread for 1 seconds.
-//                            try {
-//                                Thread.sleep(1000);
-//                            } catch ( InterruptedException e ) {
-//                            }
+                    Log.v(TAG, "Navigating back to App: " + BuildConfig.APPLICATION_ID);
+//                    Intent intent = new Intent( this, MainActivity.class );
+//                    intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP );
 //
-//                            // After sleep finished blocking, create a Runnable to run on the UI Thread.
-//                            MainActivity.mActivity.runOnUiThread( new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    Log.v( TAG, "Going back to app:: " + BuildConfig.APPLICATION_ID );
-//                                    MainActivity.startNewActivity( MainActivity.mContext, BuildConfig.APPLICATION_ID );
-//                                    Log.v( TAG, "Back to app" );
-//                                }
-//                            });
-//                        }
-//                    };
-//                    thread.start();
-//                    thread.join();
-                    Log.v( TAG, "Navigating back to App: " + BuildConfig.APPLICATION_ID );
-                    MainActivity.startNewActivity( MainActivity.mActivity, BuildConfig.APPLICATION_ID, Intent.FLAG_ACTIVITY_SINGLE_TOP );
+//                    intent.setAction( Intent.ACTION_MAIN );
+//                    intent.addCategory( Intent.CATEGORY_LAUNCHER );
+//                    Log.v( TAG, MainActivity.mActivity.toString() );
+//                    this.getApplicationContext().startActivity( intent );
+                    MainActivity.startNewActivity( this.getApplicationContext(), BuildConfig.APPLICATION_ID, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP );
                 }
                 return;
             }

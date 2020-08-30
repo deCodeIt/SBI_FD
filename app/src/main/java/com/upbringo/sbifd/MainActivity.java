@@ -143,6 +143,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.v( TAG, "onNewIntent" );
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         visible = true;
